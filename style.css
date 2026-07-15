@@ -73,8 +73,8 @@ main {
 
 
 .preview-box {
-    width: 70%;
-    height: 70%;
+    width: min(70%, 70vh);
+    aspect-ratio: 1 / 1;
     border: 2px solid #444;
     background: #000;
 }
