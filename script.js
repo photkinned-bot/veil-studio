@@ -145,12 +145,7 @@ algorithmSelect.addEventListener(
     "change",
     function() {
 
-        createNoiseMap();
-
-        drawTexture();
-
-    }
-);
+        
 );
 randomizeButton.addEventListener(
     "click",
