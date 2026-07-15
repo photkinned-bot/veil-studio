@@ -1,6 +1,5 @@
 // Veil Studio
-// First procedural texture preview
-
+// First texture test
 
 const canvas = document.getElementById("textureCanvas");
 const ctx = canvas.getContext("2d");
@@ -8,41 +7,41 @@ const ctx = canvas.getContext("2d");
 
 function resizeCanvas() {
 
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+    canvas.width = 600;
+    canvas.height = 600;
 
-    generateTexture();
-
+    drawTexture();
 }
 
 
-function generateTexture() {
+function drawTexture() {
 
-    const image = ctx.createImageData(
-        canvas.width,
-        canvas.height
-    );
+    const size = 20;
 
-    for (let i = 0; i < image.data.length; i += 4) {
+    for (let y = 0; y < canvas.height; y += size) {
 
-        const value = Math.random() * 255;
+        for (let x = 0; x < canvas.width; x += size) {
 
-        image.data[i] = value;
-        image.data[i + 1] = value;
-        image.data[i + 2] = value;
-        image.data[i + 3] = 255;
+            const value = Math.random() > 0.5;
+
+            if (value) {
+                ctx.fillStyle = "#dddddd";
+            } else {
+                ctx.fillStyle = "#333333";
+            }
+
+            ctx.fillRect(
+                x,
+                y,
+                size,
+                size
+            );
+
+        }
 
     }
 
-    ctx.putImageData(image, 0, 0);
-
 }
-
-
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
 
 
 resizeCanvas();
