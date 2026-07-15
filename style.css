@@ -113,3 +113,22 @@ footer {
     gap: 10px;
     padding: 0 20px;
 }
+
+.algorithm {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+
+.layer label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 8px;
+    color: #bbb;
+}
+
+
+.layer input[type="range"] {
+    width: 100%;
+    margin-bottom: 10px;
+}
