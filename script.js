@@ -7,6 +7,8 @@ const ctx = canvas.getContext("2d");
 
 const slider = document.getElementById("scaleSlider");
 
+const algorithmSelect = document.getElementById("algorithmSelect");
+
 
 function resizeCanvas() {
 
@@ -78,6 +80,14 @@ slider.addEventListener(
     }
 );
 
+algorithmSelect.addEventListener(
+    "change",
+    function() {
+
+        drawTexture();
+
+    }
+);
 
 
 resizeCanvas();
