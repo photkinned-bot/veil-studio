@@ -16,7 +16,18 @@ let noiseMap = [];
 
 function createNoiseMap() {
 
-    noiseMap = createPixelNoiseMap();
+    const algorithm = algorithmSelect.value;
+
+
+    if (algorithm === "value") {
+
+        noiseMap = createValueNoiseMap();
+
+    } else {
+
+        noiseMap = createPixelNoiseMap();
+
+    }
 
 }
 
