@@ -16,7 +16,9 @@ function resizeCanvas() {
 
 function drawTexture() {
 
-    const size = 20;
+    const size = Number(
+    document.getElementById("scaleSlider").value
+);
 
     for (let y = 0; y < canvas.height; y += size) {
 
@@ -45,3 +47,11 @@ function drawTexture() {
 
 
 resizeCanvas();
+
+
+document
+    .getElementById("scaleSlider")
+    .addEventListener(
+        "input",
+        drawTexture
+    );
