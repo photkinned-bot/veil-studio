@@ -52,14 +52,18 @@ function drawTexture() {
 
 const value = Math.random();
 
-const shade = Math.floor(
-    128 + (value - 0.5) * 255 * contrast
-);
+let shade;
 
+if (value > 0.5) {
+    shade = 128 + (127 * contrast);
+} else {
+    shade = 128 - (127 * contrast);
+}
 
-ctx.fillStyle = 
+shade = Math.floor(shade);
+
+ctx.fillStyle =
     `rgb(${shade}, ${shade}, ${shade})`;
-
 
             ctx.fillRect(
                 x,
