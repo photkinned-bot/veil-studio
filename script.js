@@ -8,6 +8,7 @@ const ctx = canvas.getContext("2d");
 const slider = document.getElementById("scaleSlider");
 const contrastSlider = document.getElementById("contrastSlider");
 const randomizeButton = document.getElementById("randomizeButton");
+const algorithmSelect = document.getElementById("algorithmSelect");
 
 
 let noiseMap = [];
@@ -46,6 +47,7 @@ function drawTexture() {
     );
 
 
+    const algorithm = algorithmSelect.value;
     const size = Number(slider.value);
 
     const contrast =
@@ -140,6 +142,10 @@ slider.addEventListener(
 
 contrastSlider.addEventListener(
     "input",
+    drawTexture
+);
+algorithmSelect.addEventListener(
+    "change",
     drawTexture
 );
 randomizeButton.addEventListener(
