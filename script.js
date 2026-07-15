@@ -143,7 +143,14 @@ contrastSlider.addEventListener(
 );
 algorithmSelect.addEventListener(
     "change",
-    drawTexture
+    function() {
+
+        createNoiseMap();
+
+        drawTexture();
+
+    }
+);
 );
 randomizeButton.addEventListener(
     "click",
