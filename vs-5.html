@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veil Studio — Процедурний Генератор Текстур</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <span class="badge">v2.7.0 Pro (CPU Opt)</span>
+            <h1 class="logo-title">VEIL STUDIO PRO</h1>
+            <span class="logo-subtitle">| Оптимізовано & Нові Деформації</span>
+        </div>
+        <div class="header-buttons">
+            <button id="btnUndo" onclick="undo()" class="btn btn-secondary" title="Скасувати (Undo) — або тап двома пальцями по канвасу" disabled>↶ Undo</button>
+            <button id="btnRedo" onclick="redo()" class="btn btn-secondary" title="Повторити (Redo) — або тап трьома пальцями по канвасу" disabled>↷ Redo</button>
+            <button onclick="randomizeAllLayers()" class="btn btn-secondary" title="Рандомізувати всі шари проєкту">🎲 Рандом (всі)</button>
+            <button onclick="resetProject()" class="btn btn-secondary" title="Скинути весь проєкт до початкового стану">↺ Скинути все</button>
+            <button onclick="$('importFile').click()" class="btn btn-secondary">Відкрити (.json)</button>
+            <button onclick="showModal('importTextModal'); $('importJsonText').value='';" class="btn btn-secondary">Вставити код</button>
+            <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importProject(event)">
+            <button onclick="openSaveModal()" class="btn btn-secondary">Зберегти проєкт</button>
+            <button onclick="openPNGExportModal()" class="btn btn-primary">Експорт PNG</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside>
+            <div class="panel-header">
+                <h2 class="panel-title">Шари</h2>
+                <button onclick="addLayer()" class="btn btn-secondary" style="padding:4px 8px; font-size:11px;">+ Генератор</button>
+            </div>
+            <div id="layersList" class="layers-list"></div>
+        </aside>
+        <div class="resize-handle" id="resizeLeft"></div>
+
+        <main>
+            <div class="canvas-meta">
+                <div>Роздільна здатність: <span style="color:#f4f4f5;">512 × 512</span></div>
+                <div>Рендер: <span id="renderTime" style="color:#f59e0b;">0.0 ms</span></div>
+                <div>Масштаб: <span id="viewScaleInfo" style="color:#3b82f6;">100%</span></div>
+            </div>
+            
+            <div id="canvasWrapper">
+                <canvas id="canvas" width="512" height="512"></canvas>
+            </div>
+
+            <div class="viewport-controls">
+                <button class="viewport-btn" onclick="viewport.zoom(0.1)" title="Збільшити">➕</button>
+                <button class="viewport-btn" onclick="viewport.zoom(-0.1)" title="Зменшити">➖</button>
+                <button class="viewport-btn" onclick="viewport.rotate(-15)" title="Повернути вліво">↺</button>
+                <button class="viewport-btn" onclick="viewport.rotate(15)" title="Повернути вправо">↻</button>
+                <button class="viewport-btn" onclick="viewport.reset()" title="Скинути перегляд" style="font-size:11px; width:auto; padding:0 8px;">Reset</button>
+            </div>
+        </main>
+
+        <div class="resize-handle" id="resizeRight"></div>
+        <aside class="right-panel">
+            <div class="panel-header">
+                <h2 class="panel-title" id="rightPanelTitle">Властивості шару</h2>
+                <div style="display:flex; gap:4px;">
+                    <button id="btnTabLayer" class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="switchRightTab('layer')">Шар</button>
+                    <button id="btnTabGlobal" class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="switchRightTab('global')">Глобальні</button>
+                </div>
+            </div>
+            <div id="propertiesPanel" class="properties-content"></div>
+        </aside>
+    </div>
+
+    <!-- Модалки -->
+    <div id="pngModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Експорт PNG</h3>
+                <button class="modal-close" onclick="$('pngModal').style.display='none'">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="property-group">
+                    <label class="property-label">Роздільна здатність</label>
+                    <div class="gen-grid" style="grid-template-columns:repeat(4,1fr);" id="exportResGrid">
+                        <button onclick="renderExportPreview(1024)" class="gen-btn" id="exportRes1024">1024</button>
+                        <button onclick="renderExportPreview(2048)" class="gen-btn" id="exportRes2048">2048</button>
+                        <button onclick="renderExportPreview(4096)" class="gen-btn" id="exportRes4096">4096</button>
+                        <button onclick="renderExportPreview(8192)" class="gen-btn" id="exportRes8192">8192</button>
+                    </div>
+                </div>
+                <p class="modal-instruction">Затисніть картинку та виберіть "Зберегти в Фото" (на мобільному) або ПКМ -> "Зберегти картинку як" (на ПК).</p>
+                <div id="exportRenderingIndicator" style="display:none; text-align:center; color:var(--text-muted); font-size:12px;">Рендеринг...</div>
+                <img id="modalPngPreview" class="modal-image-preview">
+                <button class="btn btn-secondary" onclick="$('pngModal').style.display='none'">Закрити</button>
+            </div>
+        </div>
+    </div>
+    <div id="saveModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Зберегти проєкт</h3>
+                <button class="modal-close" onclick="$('saveModal').style.display='none'">✕</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="projectJsonText" class="modal-textarea" readonly onclick="this.select()"></textarea>
+                <button id="copyJsonBtn" class="btn btn-primary" onclick="copyProjectCode()">Скопіювати</button>
+            </div>
+        </div>
+    </div>
+    <div id="importTextModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Імпорт</h3>
+                <button class="modal-close" onclick="$('importTextModal').style.display='none'">✕</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="importJsonText" class="modal-textarea" placeholder="Вставте JSON..."></textarea>
+                <button class="btn btn-primary" onclick="loadProjectFromText()">Завантажити</button>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
